@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -18,7 +17,7 @@ public class Main {
         saveGame(save2, gameProgress2);
         saveGame(save3, gameProgress3);
 
-        List<String> listFiles = List.of(save1,save2,save3);
+        List<String> listFiles = List.of(save1, save2, save3);
 
         zipFiles("D:\\Netology\\project\\javacore\\files-task1\\Games\\savegames\\save.zip", listFiles);
     }
@@ -34,8 +33,11 @@ public class Main {
     public static void zipFiles(String path, List<String> listSaves) {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(path))) {
             for (String currentPath : listSaves) {
-                try(FileInputStream fis = new FileInputStream(currentPath)){
-                    ZipEntry zipEntry = new ZipEntry(currentPath);
+                try (FileInputStream fis = new FileInputStream(currentPath)) {
+                    File file = new File(currentPath)
+                    String currentName = file.getName();
+
+                    ZipEntry zipEntry = new ZipEntry(currentName);
                     zipOutputStream.putNextEntry(zipEntry);
 
                     byte[] buffer = new byte[fis.available()];
@@ -44,7 +46,6 @@ public class Main {
                     zipOutputStream.write(buffer);
                     zipOutputStream.closeEntry();
 
-                    File file = new File(currentPath);
                     file.delete();
                 }
             }
