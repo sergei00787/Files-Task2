@@ -9,9 +9,9 @@ public class Main {
         GameProgress gameProgress2 = new GameProgress(50, 2, 50, 500);
         GameProgress gameProgress3 = new GameProgress(20, 3, 20, 600);
 
-        String save1 = "D:\\Netology\\project\\javacore\\files-task1\\Games\\savegames\\save1.dat";
-        String save2 = "D:\\Netology\\project\\javacore\\files-task1\\Games\\savegames\\save2.dat";
-        String save3 = "D:\\Netology\\project\\javacore\\files-task1\\Games\\savegames\\save3.dat";
+        String save1 = "/home/serg/IdeaProjects/Netology/Files-Task1/Games/savegames/save1.dat";
+        String save2 = "/home/serg/IdeaProjects/Netology/Files-Task1/Games/savegames/save2.dat";
+        String save3 = "/home/serg/IdeaProjects/Netology/Files-Task1/Games/savegames/save3.dat";
 
         saveGame(save1, gameProgress1);
         saveGame(save2, gameProgress2);
@@ -19,7 +19,7 @@ public class Main {
 
         List<String> listFiles = List.of(save1, save2, save3);
 
-        zipFiles("D:\\Netology\\project\\javacore\\files-task1\\Games\\savegames\\save.zip", listFiles);
+        zipFiles("/home/serg/IdeaProjects/Netology/Files-Task1/Games/savegames/save.zip", listFiles);
     }
 
     public static void saveGame(String file, GameProgress gameProgress) {
@@ -31,24 +31,31 @@ public class Main {
     }
 
     public static void zipFiles(String path, List<String> listSaves) {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(path))) {
-            for (String currentPath : listSaves) {
-                try (FileInputStream fis = new FileInputStream(currentPath)) {
-                    File file = new File(currentPath)
-                    String currentName = file.getName();
+        try (final ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(path))) {
+            listSaves.stream().forEach((str) -> zipFile(str, zipOutputStream));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                    ZipEntry zipEntry = new ZipEntry(currentName);
-                    zipOutputStream.putNextEntry(zipEntry);
 
-                    byte[] buffer = new byte[fis.available()];
-                    fis.read(buffer);
+    public static void zipFile(String currentPath, ZipOutputStream zipOutputStream) {
+        try (FileInputStream fis = new FileInputStream(currentPath)) {
+            File file = new File(currentPath);
+            String currentName = file.getName();
 
-                    zipOutputStream.write(buffer);
-                    zipOutputStream.closeEntry();
+            ZipEntry zipEntry = new ZipEntry(currentName);
+            zipOutputStream.putNextEntry(zipEntry);
 
-                    file.delete();
-                }
-            }
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+
+            zipOutputStream.write(buffer);
+            zipOutputStream.closeEntry();
+
+            file.delete();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
